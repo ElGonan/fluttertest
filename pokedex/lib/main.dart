@@ -1,65 +1,76 @@
 import 'package:flutter/material.dart';
+import 'services/pokemon_service.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pokédex',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-      ),
-      home: const MyHomePage(title: 'Pokédex'),
+      theme: ThemeData(primarySwatch: Colors.red),
+      home: PokemonListScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
+class PokemonListScreen extends StatefulWidget {
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _PokemonListScreenState createState() => _PokemonListScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _PokemonListScreenState extends State<PokemonListScreen> {
+  final PokemonService _pokemonService = PokemonService();
+  List<dynamic> _pokemonList = [];
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    super.initState();
+    _loadPokemon();
+  }
+
+  void _loadPokemon() async {
+    var list = await _pokemonService.fetchPokemons();
     setState(() {
-      _counter++;
+      _pokemonList = list;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.amber, 
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      appBar: AppBar(title: Text('Pokédex')),
+      body: ListView.separated(
+        itemCount: _pokemonList.length,
+        separatorBuilder: (context, index) => Divider(
+          color: Colors.grey,
+          thickness: 1,
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        itemBuilder: (context, index) {
+          var pokemon = _pokemonList[index];
+          String name = pokemon['name'];
+          String url = pokemon['url'];
+          String img = PokemonPNG().getPokemonImageUrl(index + 1);
+          
+          // Extraer el ID desde la URL
+          String id = url.split('/')[url.split('/').length - 2];
+
+          return ListTile(
+            leading: Text(id, style: TextStyle(fontWeight: FontWeight.bold)), // Mostrar el número
+            title: Text(name.toUpperCase()), // Convertir el nombre en mayúsculas
+            trailing: SizedBox(
+                width: 100, // Ajusta el ancho según lo necesites
+                height: 150, // Ajusta la altura según lo necesites
+                child: Image.network(img),
+              ),
+              
+            onTap: () {
+              // Aquí puedes navegar a la pantalla de detalles
+            },
+          );
+        },
       ),
     );
   }
