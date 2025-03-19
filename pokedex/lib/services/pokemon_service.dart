@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:pokedex/main.dart';
 
 class PokemonService {
   final String baseUrl = 'https://pokeapi.co/api/v2/pokemon?limit=151';
