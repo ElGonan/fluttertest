@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'services/pokemon_service.dart';
+import 'package:flutter/cupertino.dart';
+import 'routes/detail.dart';
+
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
+}
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,11 +25,14 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class PokemonListScreen extends StatefulWidget {
+  const PokemonListScreen({super.key});
+
   @override
   _PokemonListScreenState createState() => _PokemonListScreenState();
 }
+
+
 
 class _PokemonListScreenState extends State<PokemonListScreen> {
   final PokemonService _pokemonService = PokemonService();
@@ -32,6 +45,7 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
   }
 
   void _loadPokemon() async {
+    
     var list = await _pokemonService.fetchPokemons();
     setState(() {
       _pokemonList = list;
@@ -54,24 +68,35 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
           String url = pokemon['url'];
           String img = PokemonPNG().getPokemonImageUrl(index + 1);
           
-          // Extraer el ID desde la URL
           String id = url.split('/')[url.split('/').length - 2];
 
           return ListTile(
-            leading: Text(id, style: TextStyle(fontWeight: FontWeight.bold)), // Mostrar el número
-            title: Text(name.toUpperCase()), // Convertir el nombre en mayúsculas
+            leading: Text(id, style: TextStyle(fontWeight: FontWeight.bold)), 
+            title: Text(name.capitalize()), 
             trailing: SizedBox(
-                width: 100, // Ajusta el ancho según lo necesites
-                height: 150, // Ajusta la altura según lo necesites
-                child: Image.network(img),
-              ),
+                width: 100,
+                height: 150, 
+                child: Row(
+                  children: <Widget>[
+                      Image.network(img),
+                      Padding(padding: EdgeInsets.all(10)),
+                    Icon(CupertinoIcons.forward),
+
+                  ],
+                )
+            ),
               
             onTap: () {
-              // Aquí puedes navegar a la pantalla de detalles
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (context) => DetailRoute(id: id)),
+              );
             },
           );
         },
       ),
     );
+    
   }
 }
+
