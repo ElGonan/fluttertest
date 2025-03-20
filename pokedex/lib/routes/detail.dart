@@ -42,6 +42,7 @@ class DetailRoute extends StatelessWidget {
                     } else if (snapshot.hasData) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(padding: EdgeInsets.all(10)),
                           SizedBox(
