@@ -81,7 +81,6 @@ class _PokemonListScreenState extends State<PokemonListScreen> {
                       Image.network(img),
                       Padding(padding: EdgeInsets.all(10)),
                     Icon(CupertinoIcons.forward),
-
                   ],
                 )
             ),

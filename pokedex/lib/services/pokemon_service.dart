@@ -28,9 +28,11 @@ class Pokemon {
   String name;
   int id;
   String spriteUrl;
+  String type;
+  Map<String, int> stats = {"HP": 0, "Attack": 0, "Defense": 0, "Special Attack": 0, "Special Defense": 0, "Speed": 0};
 
   // Constructor privado para que no se pueda instanciar directamente
-  Pokemon._(this.name, this.id, this.spriteUrl);
+  Pokemon._(this.name, this.id, this.spriteUrl, this.type, this.stats);
 
   // Método estático para crear un Pokémon desde la API
   static Future<Pokemon> fromId(int id) async {
@@ -43,6 +45,15 @@ class Pokemon {
         data['name'], 
         data['id'], 
         data['sprites']['front_default'] ?? "",
+        data['types'][0]['type']['name'],
+        {
+          "HP": data['stats'][0]['base_stat'],
+          "Attack": data['stats'][1]['base_stat'],
+          "Defense": data['stats'][2]['base_stat'],
+          "Special Attack": data['stats'][3]['base_stat'],
+          "Special Defense": data['stats'][4]['base_stat'],
+          "Speed": data['stats'][5]['base_stat'],
+        }
       );
     } else {
       throw Exception('Failed to load Pokémon');
